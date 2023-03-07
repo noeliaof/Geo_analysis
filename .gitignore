@@ -108,5 +108,6 @@ data/
 *pdf
 credentials.yml
 *.zip
+*.SAFE
 *.tiff
 .DS_Store
