@@ -1,0 +1,11 @@
+
+#date: (20200101,20200131)  # Start, End date, YYYYMMDD
+footprint_file: '/Users/noeliaotero/Documents/Geo_analysis/cameroon.json' # name of geojson file. Inset relevant filename or make your own https://geojson.io
+platformname: 'Sentinel-2'  # Satellite platform name, e.g. Sentinel-1, 2
+processinglevel: 'Level-2A'
+#producttype: 'GRD',  # find satellite products at https://sentinel.esa.int/web/sentinel/user-guides/
+#   'sensoroperationalmode': 'IW',  # Acquisition mode
+#    'processingmode': 'Offline',  # Processing mode, i.e. Offline, NRT
+data_dir: '/Users/noeliaotero/Documents/Geo_analysis/data/'  # Directory to download data to.
+#cloudcoverpercentage: (0,20)
+download_index: 1
