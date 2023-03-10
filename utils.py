@@ -7,6 +7,8 @@ import rasterio
 from rasterio.mask import mask
 from shapely.ops import transform
 from rasterio.io import MemoryFile
+import numpy as np
+from scipy.interpolate import RectBivariateSpline
 # to unzip 
 
 def unzip(s_conf):
@@ -26,6 +28,8 @@ def unzip(s_conf):
         to_unzip = zipfile.ZipFile(file_to_unzip, 'r')
         to_unzip.extractall()
         to_unzip.close()
+        # remove zip files
+        os.remove(file_to_unzip)
     os.chdir(cwd)
 
 # Credits to: https://medium.com/analytics-vidhya/two-ways-of-extracting-points-of-interest-from-sentinel-2a-data-baa124b1ed92
@@ -51,3 +55,15 @@ def crop_memory_tiff_file(mem_file, polygons, crop):
     result_f.write(result_image)
     
     return result_f
+
+def extrapolate(arr, target_dim):
+    x = np.array(range(arr.shape[0]))
+    y = np.array(range(arr.shape[1]))
+    z = arr
+    xx = np.linspace(x.min(), x.max(), target_dim[0])
+    yy = np.linspace(y.min(), y.max(), target_dim[1])
+
+    new_kernel = RectBivariateSpline(x, y, z, kx=2, ky=2)
+    result = new_kernel(xx, yy)
+
+    return result
