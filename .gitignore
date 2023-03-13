@@ -110,4 +110,5 @@ credentials.yml
 *.zip
 *.SAFE
 *.tiff
+*.aux
 .DS_Store

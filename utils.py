@@ -67,3 +67,68 @@ def extrapolate(arr, target_dim):
     result = new_kernel(xx, yy)
 
     return result
+
+
+def get_bounds_of_AoI(obj_aoi, src_crs):
+    
+    aoi = gpd.read_file(obj_aoi)
+    
+    bounds = aoi.total_bounds
+    
+    offset = 1/60  #2000m in degree
+
+    # WGS84 coordinates
+    minx, miny = bounds[0]-offset, bounds[1]-offset
+    maxx, maxy = bounds[2]+offset, bounds[3]+offset
+
+    bbox = box(minx, miny, maxx, maxy)
+    
+    print(bbox)
+
+    geo = gpd.GeoDataFrame({'geometry': bbox}, index=[0], crs="EPSG:4326")
+
+    #picking up the coordinate system of the image:
+    #crs=src.crs.to_epsg()
+    geo = geo.to_crs(crs=src_crs) #src.crs.to_epsg())
+
+    coords = getFeatures(geo)
+    
+    return coords
+
+def clip_raster_with_bounds(in_tif, out_tif, coords):
+
+    #load the mosaided file
+    data = rasterio.open(in_tif)
+
+    out_img, out_transform = rasterio.mask.mask(dataset=data, shapes=coords, crop=True)
+
+    # Copy the metadata
+    out_meta = data.meta.copy()
+
+    # Parse EPSG code
+    epsg_code = int(data.crs['init'][5:])
+
+    out_meta.update({"driver": "GTiff",
+            "height": out_img.shape[1],
+            "width": out_img.shape[2],
+            "transform": out_transform,
+            "crs": epsg_code} #pycrs.parse.from_epsg_code(epsg_code).to_proj4()}
+            )
+
+    with rasterio.open(out_tif, "w", **out_meta) as dest:
+        dest.write(out_img)
+
+    print('save file',out_tif)
+
+
+def get_src_crs(prototype_tif):
+    
+    with rasterio.open(prototype_tif, 'r') as test:
+        src_crs = test.crs.to_epsg()
+        
+    return src_crs
+
+def getFeatures(gdf):
+    """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
+    import json
+    return [json.loads(gdf.to_json())['features'][0]['geometry']]
