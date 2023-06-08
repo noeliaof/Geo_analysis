@@ -112,3 +112,4 @@ credentials.yml
 *.tiff
 *.aux
 .DS_Store
+*.json

@@ -8,6 +8,7 @@ from rasterio.mask import mask
 from shapely.ops import transform
 from rasterio.io import MemoryFile
 import numpy as np
+import geopandas as gpd
 from scipy.interpolate import RectBivariateSpline
 # to unzip 
 
@@ -132,3 +133,24 @@ def getFeatures(gdf):
     """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
     import json
     return [json.loads(gdf.to_json())['features'][0]['geometry']]
+
+
+
+def get_bounds_of_AoI(obj_aoi, offset):
+    
+    aoi = gpd.read_file(obj_aoi)
+    
+    bounds = aoi.total_bounds
+    #offset = 1/60  #200m in degree
+    # Extend the bounding box by 200 m
+    minx, miny = bounds[0]-offset, bounds[1]-offset
+    maxx, maxy = bounds[2]+offset, bounds[3]+offset
+
+    bbox = box(minx, miny, maxx, maxy)
+    
+    print(bbox)
+
+    geo = gpd.GeoDataFrame({'geometry': bbox}, index=[0], crs="EPSG:4326")
+
+    
+    return geo 
