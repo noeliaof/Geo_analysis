@@ -1,1 +1,1 @@
-U-Net model for Semantic Segmentation.
+This repository contains a collection of notebooks and scripts as part of the [Omdena project](https://omdena.com/chapter-challenges/automating-land-use-and-land-cover-mapping-using-computer-vision-and-satellite-imagery/). For more information, please visit the official [repository](https://github.com/OmdenaAI/douala-chapter-automatic-land-use).
